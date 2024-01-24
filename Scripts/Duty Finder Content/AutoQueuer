@@ -1,17 +1,14 @@
 -- Before executing, select the duty you want to queue into and unsync if necessary
 
--- Local value that increments and keeps track of how many you have run
-local conditionMetCount = 0
+-- Local value that increments and keeps track of how many times you have joined an activity
+local pcallCount = 0
 
--- Number of times it will queue you into the activity
-while conditionMetCount < 90 do
+-- Number of times it will attempt to join the activity
+local maxAttempts = 90
+
+while pcallCount < maxAttempts do
     -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
     if GetCharacterCondition(1) and not GetCharacterCondition(34) then
-        -- Increment the count when the condition is met
-        conditionMetCount = conditionMetCount + 1
-
-        -- Echo the number of duties entered, does not work at the moment
-        --yield("/echo Duties entered: " .. conditionMetCount)
 
         -- Checks if Duty Finder is open, opens if needed
         if not IsAddonVisible("JournalDetail") then
@@ -21,6 +18,12 @@ while conditionMetCount < 90 do
 
         -- Wait for 1 second and then press Join
         yield("/pcall ContentsFinder true 12 0 <wait.1>")
+
+        -- Increment the /pcall count
+        pcallCount = pcallCount + 1
+
+        -- Echo the number of /pcall attempts
+        yield("/echo Duties Entered: " .. pcallCount)
 
         -- Check if Duty Commence screen is up
         if IsAddonVisible("ContentsFinderConfirm") then
