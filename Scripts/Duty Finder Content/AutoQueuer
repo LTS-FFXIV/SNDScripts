@@ -1,9 +1,10 @@
 -- Before executing, select the duty you want to queue into and unsync if necessary
 
--- Number of times it will queue you into the activity
-local conditionMetCount = 90
+-- Local value that increments and keeps track of how many you have run
+local conditionMetCount = 0
 
-while conditionMetCount < 500 do
+-- Number of times it will queue you into the activity
+while conditionMetCount < 90 do
     -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
     if GetCharacterCondition(1) and not GetCharacterCondition(34) then
         -- Increment the count when the condition is met
