@@ -1,0 +1,28 @@
+local loop = 500
+local conditionMetCount = 90
+
+while conditionMetCount < loop do
+    -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
+    if GetCharacterCondition(1) and not GetCharacterCondition(34) then
+        -- Increment the count when the condition is met
+        conditionMetCount = conditionMetCount + 1
+
+        -- Checks if Duty Finder is open, opens if needed
+        if not IsAddonVisible("JournalDetail") then
+            -- Opens Duty Finder
+            yield("/dutyfinder")
+        end
+
+        -- Wait for 1 second and then press Join
+        yield("/pcall ContentsFinder true 12 0 <wait.1>")
+
+        -- Check if Duty Commence screen is up
+        if IsAddonVisible("ContentsFinderConfirm") then
+            -- If visible, click on the commence duty
+            yield("/click duty_commence")
+        end
+    else
+        -- Optional: Add a delay or other actions when the condition is not met
+        -- Example: yield("/wait 1")
+    end
+end
