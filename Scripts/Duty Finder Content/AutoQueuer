@@ -12,7 +12,7 @@ while commenceCount < maxAttempts do
     -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
     if GetCharacterCondition(1) and not GetCharacterCondition(34) then
 
-        -- Wait for 5 seconds due to instance travel time
+        -- Wait for 2 seconds due to instance travel time
             yield("/wait 2")
 
         -- Checks if Duty Finder is open, opens if needed
