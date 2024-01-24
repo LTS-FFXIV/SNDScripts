@@ -1,11 +1,16 @@
-local loop = 500
+-- Before executing, select the duty you want to queue into and unsync if necessary
+
+-- Number of times it will queue you into the activity
 local conditionMetCount = 90
 
-while conditionMetCount < loop do
+while conditionMetCount < 500 do
     -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
     if GetCharacterCondition(1) and not GetCharacterCondition(34) then
         -- Increment the count when the condition is met
         conditionMetCount = conditionMetCount + 1
+
+        -- Echo the number of duties entered, does not work at the moment
+        --yield("/echo Duties entered: " .. conditionMetCount)
 
         -- Checks if Duty Finder is open, opens if needed
         if not IsAddonVisible("JournalDetail") then
@@ -20,9 +25,11 @@ while conditionMetCount < loop do
         if IsAddonVisible("ContentsFinderConfirm") then
             -- If visible, click on the commence duty
             yield("/click duty_commence")
+            -- Wait for 5 seconds due to instance travel time
+            yield("/wait 5")
         end
     else
-        -- Optional: Add a delay or other actions when the condition is not met
-        -- Example: yield("/wait 1")
+        -- Checks condition every 5 seconds
+        yield("/wait 5")
     end
 end
