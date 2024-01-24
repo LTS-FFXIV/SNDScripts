@@ -1,14 +1,19 @@
+-- I made this to help speed up the tank mount farm unsynced
+
 -- Before executing, select the duty you want to queue into and unsync if necessary
 
 -- Local value that increments and keeps track of how many times you have joined an activity
-local pcallCount = 0
+local commenceCount = 0
 
 -- Number of times it will attempt to join the activity
 local maxAttempts = 90
 
-while pcallCount < maxAttempts do
+while commenceCount < maxAttempts do
     -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
     if GetCharacterCondition(1) and not GetCharacterCondition(34) then
+
+        -- Wait for 5 seconds due to instance travel time
+            yield("/wait 2")
 
         -- Checks if Duty Finder is open, opens if needed
         if not IsAddonVisible("JournalDetail") then
@@ -19,18 +24,19 @@ while pcallCount < maxAttempts do
         -- Wait for 1 second and then press Join
         yield("/pcall ContentsFinder true 12 0 <wait.1>")
 
-        -- Increment the /pcall count
-        pcallCount = pcallCount + 1
-
-        -- Echo the number of /pcall attempts
-        yield("/echo Duties Entered: " .. pcallCount)
-
         -- Check if Duty Commence screen is up
         if IsAddonVisible("ContentsFinderConfirm") then
             -- If visible, click on the commence duty
             yield("/click duty_commence")
-            -- Wait for 5 seconds due to instance travel time
+
+        -- Increment the commence count
+            commenceCount = commenceCount + 1
+
+        -- Wait for 5 seconds due to instance travel time
             yield("/wait 5")
+
+        -- Echo the number of /pcall attempts
+            yield("/echo Duties Entered: " .. commenceCount)
         end
     else
         -- Checks condition every 5 seconds
