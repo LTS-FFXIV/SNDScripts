@@ -1,0 +1,37 @@
+-- Set duty action keybind to Insert in keybind menu
+
+-- Local value to track how many times "/send Insert" has been executed
+local castCount = 0
+
+while true do
+    -- Check if player is in Emanation Extreme
+    if IsInZone(720) then
+        -- Check for being in combat
+        if GetCharacterCondition(26) then
+            -- Check if player does not have Vril status
+            if not HasStatus("Vril") then
+                -- need to add a check if the actionID of targets isCasting matches Divine Denial, Desire, or Doubt
+                -- if actionId == 8521 or actionId == 8522 or actionId == 8523 then
+                -- Player does not have Vril status, execute command
+                yield("/send Insert")
+
+                -- Increment the cast count
+                castCount = castCount + 1
+
+                -- Echo the number of casts
+                yield("/echo Vril Casts: " .. castCount)
+            end
+
+            -- Wait for a period to avoid rapid execution
+            yield("/wait 4")
+        else
+            -- If not in combat, wait before next check
+            yield("/echo NotInCombat")
+            yield("/wait 2")
+        end
+    else
+        -- If not in the specified zone, wait before checking again
+        yield("/echo NotInEmanationExtreme")
+        yield("/wait 2")
+    end
+end
