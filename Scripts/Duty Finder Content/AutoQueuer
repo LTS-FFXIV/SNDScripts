@@ -35,7 +35,7 @@ while commenceCount < maxAttempts do
         -- Wait for 5 seconds due to instance travel time
             yield("/wait 5")
 
-        -- Echo the number of /pcall attempts
+        -- Echo the number of commenceCount attempts
             yield("/echo Duties Entered: " .. commenceCount)
         end
     else
