@@ -8,6 +8,9 @@ while neverstop do
     if not current_target or current_target == "" then
         yield("/targetenemy")
         current_target = GetTargetName()
+        if current_target == "" then
+            yield("/echo No target or distance information available.")
+        end
     end
     
     local dist_to_enemy = GetDistanceToTarget()
@@ -21,9 +24,6 @@ while neverstop do
         else
             yield("/targetenemy")
         end
-    else
-        yield("/echo No target or distance information available.")
-        yield("/wait 2")
     end
 
     yield("/wait 1")
