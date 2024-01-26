@@ -1,0 +1,45 @@
+local enemy_max_dist = 40 -- maximum distance to the specific enemy to move towards
+local combat_check_interval = 15 -- interval to check if in combat (in seconds)
+
+-- Farm Spot in Bozja
+local combat_locationX = -45
+local combat_locationY = 17
+local combat_locationZ = 673
+
+local neverstop = true
+
+while neverstop do
+    -- Check if bound by duty (condition 34)
+    if GetCharacterCondition(34) then
+        -- Check if in combat
+        if GetCharacterCondition(26) then
+            yield("/visland moveto " .. combat_locationX .. " " .. combat_locationY .. " " .. combat_locationZ)
+            yield("/wait 1")
+        end
+    end
+
+    local current_target = GetTargetName()
+
+    if not current_target or current_target == "" then
+        yield("/targetenemy")
+        current_target = GetTargetName()
+        if current_target == "" then
+            yield("/echo No target or distance information available.")
+        end
+    else
+        local dist_to_enemy = GetDistanceToTarget()
+
+        if dist_to_enemy and dist_to_enemy > 0 then
+            if dist_to_enemy <= enemy_max_dist then
+                local enemy_x = GetTargetRawXPos()
+                local enemy_y = GetTargetRawYPos()
+                local enemy_z = GetTargetRawZPos()
+                yield("/visland moveto " .. enemy_x .. " " .. enemy_y .. " " .. enemy_z)
+            else
+                yield("/targetenemy")
+            end
+        end
+    end
+
+    yield("/wait " .. tostring(combat_check_interval)) -- Ensure combat_check_interval is converted to a string
+end
