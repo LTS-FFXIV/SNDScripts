@@ -1,5 +1,35 @@
 -- Local value to track how many times "/send Insert" has been executed
-local castCount = 0
+local vrilCount = 0
+-- Variable to track the status of Vril
+local vrilStatus = false
+-- Flag to track whether Vril status has changed
+local vrilStatusChanged = false
+
+-- Function to handle Vril status change
+function handleVrilStatusChange()
+    -- Check if player obtained Vril status after casting
+    if vrilStatus == true then
+        if not vrilStatusChanged then
+            vrilCount = vrilCount + 1 -- Increment the vril count
+            vrilStatusChanged = true -- Set the flag to true
+            yield("/echo Vril Casts: " .. vrilCount)
+        end
+    else
+        vrilStatusChanged = false -- Reset the flag when Vril status is already true
+    end
+end
+
+-- Create a separate loop for checking Vril status
+while true do
+    -- Check for the presence of Vril status
+    vrilStatus = HasStatus("Vril")
+
+    -- Call the function to handle Vril status change
+    handleVrilStatusChange()
+
+    -- Wait for a short period (1 second) before checking again
+    yield("/wait 1")
+end
 
 while true do
     -- Check if player is in Emanation Extreme
@@ -12,22 +42,22 @@ while true do
             -- Check if the action ID matches Divine Denial, Divine Desire, or Divine Doubt
             if actionId == 8521 or actionId == 8522 or actionId == 8523 then
                 -- Check if player does not have Vril status
-                if not HasStatus("Vril") then
-                    -- Player does not have Vril status, execute command
-                    yield("/send Insert")
-
-                    -- Increment the cast count
-                    castCount = castCount + 1
-
-                    -- Echo the number of casts
-                    yield("/echo Vril Casts: " .. castCount)
+                if vrilStatus == false then
+                    repeat
+                        -- Player does not have Vril status, execute command
+                        yield("/send Insert")
+                        
+                        -- Wait for a short period (1 second), commented out for now as i dont believe this is needed
+                        -- yield("/wait 1")
+                        
+                    until vrilStatus == true -- Keep sending "/send Insert" until Vril status is obtained
                 end
             end
 
-            -- Wait for a period to avoid rapid execution
-            yield("/wait 4")
+            -- Wait for a short period (1 second) before checking again
+            yield("/wait 1")
         else
-            -- If not in combat, wait before next check
+            -- If not in combat, wait before the next check
             yield("/echo NotInCombat")
             yield("/wait 2")
         end
