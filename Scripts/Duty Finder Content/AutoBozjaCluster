@@ -1,7 +1,7 @@
 -- This assumes youre using a class that can solo pull large packs while using RS and the Target All setting
 -- You need visland plugin for this to work
 -- You need to set tab targetting on if not already for some reason
--- I've done my best to 
+-- I've done my best to comment every line with what it does to help if anyone wanted to learn to write LUA
 
 -- Maximum distance and enemy can be away from you before it gives up on trying to reach it
 local enemy_max_dist = 40
@@ -26,6 +26,7 @@ while neverstop do
             -- Moves to designated farm spot if not in combat
             yield("/visland moveto " .. combat_locationX .. " " .. combat_locationY .. " " .. combat_locationZ)
             yield("/wait 1")
+            yield("/visland stop")
         end
     end
 
