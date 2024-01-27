@@ -1,0 +1,143 @@
+-- This is the big one, automating Emanation Extreme to allow auto farming clears for Tank achivement progress.
+-- Requires RotationSolver and visland, with RS set to not turn off Auto status after completing a duty or changing zones
+
+-- Local value to track how many times "/send Insert" has been executed
+local vrilCount = 0
+-- Variable to track the status of Vril
+local vrilStatus = false
+-- Flag to track whether Vril status has changed
+local vrilStatusChanged = false
+-- maximum distance to the specific enemy to move towards
+local enemy_max_dist = 40
+-- loop
+local neverstop = true
+-- Local value that increments and keeps track of how many times you have joined an activity
+local commenceCount = 0
+-- Number of times it will attempt to join the activity
+local maxAttempts = 90
+
+-- Function to handle Vril status change
+function handleVrilStatusChange()
+    -- Check if player obtained Vril status after casting
+    if vrilStatus == true then
+        if not vrilStatusChanged then
+            vrilCount = vrilCount + 1 -- Increment the vril count
+            vrilStatusChanged = true -- Set the flag to true
+            yield("/echo Vril Casts: " .. vrilCount)
+        end
+    else
+        vrilStatusChanged = false -- Reset the flag when Vril status is already true
+    end
+end
+
+while commenceCount < maxAttempts do
+    -- Check for GetCharacterCondition(1) to be true and GetCharacterCondition(34) to be false
+    if GetCharacterCondition(1) and not GetCharacterCondition(34) then
+
+        -- Wait for 2 seconds due to instance travel time
+            yield("/wait 2")
+
+        -- Checks if Duty Finder is open, opens if needed
+        if not IsAddonVisible("JournalDetail") then
+            -- Opens Duty Finder
+            yield("/dutyfinder")
+        end
+
+        -- Wait for 1 second and then press Join
+        yield("/pcall ContentsFinder true 12 0 <wait.1>")
+
+        -- Check if Duty Commence screen is up
+        if IsAddonVisible("ContentsFinderConfirm") then
+            -- If visible, click on the commence duty
+            yield("/click duty_commence")
+
+        -- Increment the commence count
+            commenceCount = commenceCount + 1
+
+        -- Wait for 5 seconds due to instance travel time
+            yield("/wait 5")
+
+        -- Echo the number of commenceCount attempts
+            yield("/echo Duties Entered: " .. commenceCount)
+        end
+    else
+        -- Checks condition every 5 seconds
+        yield("/wait 5")
+    end
+end
+
+-- Create a separate loop for checking Vril status
+while true do
+    -- Check for the presence of Vril status
+    vrilStatus = HasStatus("Vril")
+
+    -- Call the function to handle Vril status change
+    handleVrilStatusChange()
+
+    -- Wait for a short period (1 second) before checking again
+    yield("/wait 1")
+end
+
+while true do
+    -- Check if player is in Emanation Extreme
+    if IsInZone(720) then
+        -- Check for being in combat
+        if GetCharacterCondition(26) then
+            -- Retrieve the action ID of the current target's cast
+            local actionId = GetTargetActionID()
+
+            -- Check if the action ID matches Divine Denial, Divine Desire, or Divine Doubt
+            if actionId == 8521 or actionId == 8522 or actionId == 8523 then
+                -- Check if player does not have Vril status
+                if vrilStatus == false then
+                    repeat
+                        -- Player does not have Vril status, execute command
+                        yield("/send Insert")
+                        
+                        -- Wait for a short period (1 second), commented out for now as i dont believe this is needed
+                        -- yield("/wait 1")
+                        
+                    until vrilStatus == true -- Keep sending "/send Insert" until Vril status is obtained
+                end
+            end
+
+            -- Wait for a short period (1 second) before checking again
+            yield("/wait 1")
+        else
+            -- If not in combat, wait before the next check
+            yield("/echo NotInCombat")
+            yield("/wait 2")
+        end
+    else
+        -- If not in the specified zone, wait before checking again
+        yield("/echo NotInEmanationExtreme")
+        yield("/wait 2")
+    end
+end
+
+while neverstop do
+    local current_target = GetTargetName()
+    
+    if not current_target or current_target == "" then
+        yield("/targetenemy")
+        current_target = GetTargetName()
+        if current_target == "" then
+            yield("/echo No target or distance information available.")
+        end
+    end
+    
+    local dist_to_enemy = GetDistanceToTarget()
+
+    if dist_to_enemy and dist_to_enemy > 0 then
+        if dist_to_enemy <= enemy_max_dist then
+            local enemy_x = GetTargetRawXPos()
+            local enemy_y = GetTargetRawYPos()
+            local enemy_z = GetTargetRawZPos()
+            yield("/visland moveto " .. enemy_x .. " " .. enemy_y .. " " .. enemy_z)
+        else
+            yield("/targetenemy")
+        end
+    end
+
+    yield("/wait 1")
+end
