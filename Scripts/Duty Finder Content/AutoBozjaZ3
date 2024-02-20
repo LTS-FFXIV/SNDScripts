@@ -1,0 +1,66 @@
+-- This assumes youre using a class that can solo pull large packs while using RS and the Target All setting
+-- You need visland plugin for this to work
+-- You need to set tab targetting on if not already for some reason
+-- I've done my best to comment every line with what it does to help if anyone wanted to learn to write LUA
+
+-- Maximum distance and enemy can be away from you before it gives up on trying to reach it
+local enemy_max_dist = 40
+
+-- Interval to check if in combat (in seconds)
+local combat_check_interval = 10
+
+-- Farm Spot in Bozja
+local combat_locationX = -284.108
+local combat_locationY = -0.600
+local combat_locationZ = 160.289
+
+-- loop
+local neverstop = true
+
+-- looping main function
+while neverstop do
+    -- Check if bound by duty (condition 34)
+    if GetCharacterCondition(34) then
+        -- Check if in combat
+        if not GetCharacterCondition(26) then
+            -- Moves to designated farm spot if not in combat
+            yield("/visland moveto " .. combat_locationX .. " " .. combat_locationY .. " " .. combat_locationZ)
+            yield("/wait 1")
+            yield("/visland stop")
+        end
+    end
+
+    -- Grab target name to check if there is a target
+    local current_target = GetTargetName()
+
+    -- Ensure that the character is actively targeting an enemy. If there's no valid target (either due to being nil or an empty string), it attempts to target an enemy and then checks if the target name is still empty. If it is, it displays a message to indicate the absence of a target or valid target information.
+    if not current_target or current_target == "" then
+        yield("/targetenemy")
+        current_target = GetTargetName()
+        if current_target == "" then
+            yield("/echo No target or distance information available.")
+        end
+    else
+        local dist_to_enemy = GetDistanceToTarget()
+
+        -- checks if dist_to_enemy is both defined (not nil) and greater than 0. This condition ensures that there is a valid distance value and that it's a positive value.
+        if dist_to_enemy and dist_to_enemy > 0 then
+            -- If the above conditions are met (i.e., there's a valid target, a valid distance, and the distance is within the maximum allowed distance enemy_max_dist), this condition checks if the distance to the enemy is less than or equal to the enemy_max_dist. If it is, it means the character is within the acceptable range to move towards the target.
+            if dist_to_enemy <= enemy_max_dist then
+                local enemy_x = GetTargetRawXPos() -- Inside this block, it calculates the X, Y, and Z coordinates of the target enemy
+                local enemy_y = GetTargetRawYPos() -- using GetTargetRawXPos(), GetTargetRawYPos(), and GetTargetRawZPos(), respectively,
+                local enemy_z = GetTargetRawZPos() -- and stores them in the enemy_x, enemy_y, and enemy_z variables.
+                -- If the character is within the acceptable range to move towards the target, this line sends a command to move to the target's location using the /visland moveto command (part of the visland plugin) with the calculated X, Y, and Z coordinates.
+                yield("/visland moveto " .. enemy_x .. " " .. enemy_y .. " " .. enemy_z)
+                yield("/wait 1")
+                yield("/visland stop")
+            else
+                -- This tab targets to the next target in case the target is too far, picking a new one.
+                yield("/send TAB")
+            end
+        end
+    end
+
+    -- Wait preconfigured time
+    yield("/wait " .. tostring(combat_check_interval)) -- Ensure combat_check_interval is converted to a string
+end
