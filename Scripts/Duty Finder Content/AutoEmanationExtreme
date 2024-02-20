@@ -1,7 +1,7 @@
 -- This is the big one, automating Emanation Extreme to allow auto farming clears for Tank achivement progress.
 -- Requires RotationSolver and visland, with RS set to not turn off Auto status after completing a duty or changing zones
 
--- Local value to track how many times "/send Insert" has been executed
+-- Local value to track how many times "/generalaction \"Duty Action I\"" has been executed
 local vrilCount = 0
 -- Variable to track the status of Vril
 local vrilStatus = false
@@ -92,12 +92,12 @@ while true do
                 if vrilStatus == false then
                     repeat
                         -- Player does not have Vril status, execute command
-                        yield("/send Insert")
+                        yield("/generalaction \"Duty Action I\"")
                         
                         -- Wait for a short period (1 second), commented out for now as i dont believe this is needed
                         -- yield("/wait 1")
                         
-                    until vrilStatus == true -- Keep sending "/send Insert" until Vril status is obtained
+                    until vrilStatus == true -- Keep sending "/generalaction \"Duty Action I\"" until Vril status is obtained
                 end
             end
 
