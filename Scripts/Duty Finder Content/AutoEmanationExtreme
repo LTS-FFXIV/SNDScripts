@@ -50,7 +50,7 @@ while true do
                     local enemy_y = GetTargetRawYPos()
                     local enemy_z = GetTargetRawZPos()
                     yield("/visland moveto " .. enemy_x .. " " .. enemy_y .. " " .. enemy_z)
-                    yield("/wait 1")  -- Adjust wait time as necessary for movement completion
+                    yield("/wait 3")  -- Adjust wait time as necessary for movement completion
                     yield("/visland stop")  -- Stop movement after reaching near the target
                 else
                     -- This section might need an additional command to re-target or adjust positioning
