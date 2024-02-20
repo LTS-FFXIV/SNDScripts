@@ -1,6 +1,6 @@
 -- This is the big one, automating Emanation Extreme to allow auto farming clears for Tank achivement progress.
 -- Requires RotationSolver and visland, with RS set to not turn off Auto status
--- Requires Automation by Jaksuhn with auto queue and autoleave enabled (offloaded that stuff from the LUA to the plugin)
+-- Requires Automaton by Jaksuhn with auto queue and autoleave enabled (offloaded that stuff from the LUA to the plugin. If you dont know where to get it, i mean, how did you find this script)
 -- Currently working on updating RotationSolver to handle Vril use so hopefully one day this can devolve back into Autowalky
 
 -- GDI i forgot to mention you need to set duty action I to Insert in keybinds
