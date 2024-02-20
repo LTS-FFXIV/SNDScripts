@@ -19,7 +19,7 @@ while true do
                 -- Check if player does not have Vril status
                 if not HasStatus("Vril") then
                     -- Player does not have Vril status, execute command
-                    yield("/generalaction \"Duty Action I\"")
+                    yield("/send Insert")
 
                     -- Increment the cast count
                     castCount = castCount + 1
