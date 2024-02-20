@@ -3,6 +3,8 @@
 -- Requires Automation by Jaksuhn with auto queue and autoleave enabled (offloaded that stuff from the LUA to the plugin)
 -- Currently working on updating RotationSolver to handle Vril use so hopefully one day this can devolve back into Autowalky
 
+-- GDI i forgot to mention you need to set duty action I to Insert in keybinds
+
 -- Local value to track how many times Vril has been executed, just as a sanity check
 local castCount = 0
 -- Local value to track the maximum distance to the specific enemy to move towards
